@@ -27,7 +27,7 @@ const Navbar = () => {
                         </div>
                     </div>
                     <div className="hidden sm:ml-6 sm:flex sm:items-center">
-                        <Link to='/login' className="bg-indigo-500 text-white px-3 py-2 rounded-md text-sm font-medium hover:bg-indigo-600">
+                        <Link to='/login' className="bg-blue-500 hover:bg-blue-700 text-white px-3 py-2 rounded-md text-sm font-medium">
                             Login
                         </Link>
                     </div>
