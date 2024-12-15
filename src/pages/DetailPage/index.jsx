@@ -22,7 +22,9 @@ const DetailPage = () => {
   }, [id]); // Tambahkan id sebagai dependensi
 
   if (!data) {
-    return <div>Loading...</div>; // Tampilkan loading saat data belum ada
+    return <div className='container mx-auto h-screen flex justify-center items-center'>
+      <span className="loading loading-dots loading-lg"></span>
+    </div>;
   }
 
   return (

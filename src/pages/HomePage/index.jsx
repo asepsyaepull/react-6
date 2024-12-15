@@ -6,33 +6,44 @@ import { Link } from 'react-router-dom'
 
 
 const HomePage = () => {
+  const [data, setData] = useState(null);
+  const [pagination, setPagination] = useState({
+    currentPage: 1,
+    limit: 3,
+    totalData: 0,
+  });
 
-  const [data, setData] = useState([]);
-  const [pagination, setPagination] = useState([
-    {
-      current_page: 1,
-      limit: null,
-      total: null,
-    }
-  ]);
-
-  const getData = async () => {
+  const getData = async (page = 1) => {
     try {
-      const response = await axios.get('https://dummyjson.com/recipes');
-      setData(response.data.recipes); // Simpan data ke state
-      setPagination({
-        current_page: response.data.current_page,
-        limit: response.data.limit,
-        total: response.data.total,
-      });
+      const response = await axios.get(`https://dummyjson.com/recipes?limit=${pagination.limit}&skip=${(page - 1) * pagination.limit}`);
+      setData(response.data.recipes);
+      setPagination((prev) => ({
+        ...prev,
+        currentPage: page,
+        totalData: response.data.total,
+      }));
     } catch (error) {
       console.error('Error fetching data:', error);
     }
-  }
+  };
 
   useEffect(() => {
-    getData();
-  }, []);
+    getData(pagination.currentPage);
+  }, [pagination.currentPage]);
+
+  const handlePageChange = (newPage) => {
+    setPagination((prev) => ({
+      ...prev,
+      currentPage: newPage,
+    }));
+  };
+
+  const totalPages = Math.ceil(pagination.totalData / pagination.limit);
+
+  if (!data) {
+    return <div className='container mx-auto h-screen flex justify-center items-center'><span className="loading loading-dots loading-lg"></span>
+    </div>;
+  }
 
   return (
     <div className="bg-gray-100 min-h-screen">
@@ -67,6 +78,23 @@ const HomePage = () => {
               </li>
             ))}
           </ul>
+          <div className="flex justify-between mt-6">
+            <button
+              onClick={() => handlePageChange(pagination.currentPage - 1)}
+              disabled={pagination.currentPage === 1}
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded disabled:opacity-50"
+            >
+              Previous
+            </button>
+            <span className="text-gray-700">Page {pagination.currentPage} of {totalPages}</span>
+            <button
+              onClick={() => handlePageChange(pagination.currentPage + 1)}
+              disabled={pagination.currentPage === totalPages}
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded disabled:opacity-50"
+            >
+              Next
+            </button>
+          </div>
         </div>
       </div>
     </div>
